@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\mobile;
+use App\Mobile;
 
 class MobilController extends Controller
 {
@@ -59,7 +59,9 @@ class MobilController extends Controller
      */
     public function edit($id)
     {
-        //
+        //formulario
+        $mobile = Mobile::findOrFail($id);
+        return $mobile;
     }
 
     /**
@@ -82,6 +84,7 @@ class MobilController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $mobile = Mobile::findOrFail($id);
+        $mobile -> delete();
     }
 }

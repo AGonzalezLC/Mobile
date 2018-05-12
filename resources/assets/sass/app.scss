@@ -1,5 +1,3 @@
-
-// Fonts
 @import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
 
 // Variables
@@ -7,6 +5,9 @@
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+
+// Toastr
+@import '~toastr/toastr.scss';
 
 .navbar-laravel {
   background-color: #fff;

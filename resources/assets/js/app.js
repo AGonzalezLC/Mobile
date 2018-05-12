@@ -1,3 +1,9 @@
+require('./bootstrap');
+
+window.axios = require('axios');
+
+window.Vue = require('vue');
+
 new Vue({
 el :'#crud',
 //llamada a la funcion
@@ -19,9 +25,13 @@ methods: {
             this.mobiles = response.data;
         } );
     },
-    deleteTel: function(){
-        alert("borrando...");
+    deleteTel: function(mobile){
+        //alert(mobile.id);
+        var url = 'mobiles/'+mobile.id;
+        axios.delete(url).then(response=>{
+            this.getMobiles();
+            toastr.success('Eliminado correctamente');
+        });
     }
-    
 }
 });
