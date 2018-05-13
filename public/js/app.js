@@ -13896,17 +13896,55 @@ new Vue({
     //end
     //aqui almacenamos datos
     data: {
-        mobiles: []
+        mobiles: [],
+        pagination: {
+            'total': 0,
+            'current_page': 0,
+            'per_page': 0,
+            'last_page': 0,
+            'from': 0,
+            'to': 0
+        },
+        newUser_id: '',
+        newNumber: '',
+        fillMobile: { 'id': '', 'number': '', 'user_id': '' },
+        errors: [],
+        offset: 3
+    },
+    computed: {
+        isActived: function isActived() {
+            return this.pagination.current_page;
+        },
+        pagesNumber: function pagesNumber() {
+            if (!this.pagination.to) {
+                return [];
+            }
+            var from = this.pagination.current_page - this.offset; //TODO OFFSET
+            if (from < 1) {
+                from = 1; //control de numeros negativos
+            }
+            var to = from + this.offset * 2;
+            if (to >= this.pagination.last_page) {
+                to = this.pagination.last_page;
+            }
+            var pagesArray = [];
+            while (from <= to) {
+                pagesArray.push(from);
+                from++;
+            }
+            return pagesArray;
+        }
     },
     //end
     //funcionalidad. aqui se llama a laravel y que te pase datos.
     methods: {
-        getMobiles: function getMobiles() {
+        getMobiles: function getMobiles(page) {
             var _this = this;
 
-            var urlMobiles = 'mobiles';
+            var urlMobiles = 'mobiles?page=' + page;
             axios.get(urlMobiles).then(function (response) {
-                _this.mobiles = response.data;
+                _this.mobiles = response.data.mobiles.data;
+                _this.pagination = response.data.pagination;
             });
         },
         deleteTel: function deleteTel(mobile) {
@@ -13918,6 +13956,47 @@ new Vue({
                 _this2.getMobiles();
                 toastr.success('Eliminado correctamente');
             });
+        },
+        createMobile: function createMobile() {
+            var _this3 = this;
+
+            var url = 'mobiles';
+            axios.post(url, {
+                number: this.newNumber,
+                user_id: this.newUser_id
+            }).then(function (response) {
+                _this3.getMobiles();
+                _this3.newNumber = '';
+                _this3.newUser_id = '';
+                _this3.errors = [];
+                $('#create').modal('hide');
+                toastr.success('Nuevo numero insertado correctamente');
+            }).catch(function (error) {
+                _this3.errors = error.response.data;
+            });
+        },
+        editMobile: function editMobile(mobile) {
+            this.fillMobile.id = mobile.id;
+            this.fillMobile.number = mobile.number;
+            this.fillMobile.user_id = mobile.user_id;
+            $('#edit').modal('show');
+        },
+        updateMobile: function updateMobile(id) {
+            var _this4 = this;
+
+            var url = 'mobiles/' + id;
+            axios.put(url, this.fillMobile).then(function (response) {
+                _this4.getMobiles();
+                _this4.fillMobile = { 'id': '', 'number': '', 'user_id': '' }, _this4.errors = [];
+                $('#edit').modal('hide');
+                toastr.success('Numero actualizado correctamente.');
+            }).catch(function (error) {
+                _this4.errors = error.response.data;
+            });
+        },
+        changePage: function changePage(page) {
+            this.pagination.current_page = page;
+            this.getMobiles(page);
         }
     }
 });

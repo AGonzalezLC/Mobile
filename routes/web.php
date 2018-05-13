@@ -15,4 +15,4 @@ Route::get('/', function () {
     return view('dashboard');
 });
 
-Route::resource('mobiles', 'MobilController', ['except' => 'show']);
+Route::resource('mobiles', 'MobileController', ['except' => 'show', 'create', 'edit']);
